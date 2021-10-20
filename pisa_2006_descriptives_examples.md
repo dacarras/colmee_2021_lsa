@@ -1,54 +1,13 @@
----
-title: "Código 1: Importar datos y generar descriptivos"
-subtitle: "Ejemplos de PISA 2006, COLMEE workshop"
-author: "dacarras"
-date: 'Octubre 20, 2021'
-output: github_document
----
-
-
-```{r setup, include=FALSE}
-#------------------------------------------------------------------------------
-# setup
-#------------------------------------------------------------------------------
-
-# knitr option
-knitr::opts_chunk$set(dev = 'png')
-options(knitr.kable.NA = '', digits = 2)
-
-# request many decimals
-options(digits = 9)
-
-# remove all previous objects
-rm(list = ls())
-
-# set appropiate time zone via OlsonNames()
-Sys.setenv(TZ="America/Santiago")
-Sys.getenv("TZ")
-Sys.time()
-
-# fonts
-Sys.setenv(LANG="en_US.UTF-8")
-
-# load main library
-library(dplyr)
-
-
-# ---------------------------------------------------------
-# get times
-# ---------------------------------------------------------
-
-start_time <- Sys.time()
-
-```
-
+Código 1: Importar datos y generar descriptivos
+================
+dacarras
+Octubre 20, 2021
 
 # Librerías
 
 ## Librerías en uso para el presente código
 
-```{r , echo=TRUE, warning=FALSE, eval = FALSE}
-
+``` r
 #------------------------------------------------------------------------------
 # librerías
 #------------------------------------------------------------------------------
@@ -83,35 +42,45 @@ install.packages("srvyr")
 
 install.packages("mitools")
 # librería para combinar resultados de datos imputados
-
 ```
 
 # Problema 1: Importación de datos
 
-- Los archivos de PISA 2006 se encuentran en formato texto plano
-- Para ser importados el usuario debiera emplear SPSS o SAS
-- Estos datos pueden ser importados de manera manual, pero esto requiere que el usuario asigne los nombres de variables y otras propiedades a cada columna importada
-- Una manera de resolver este problema es emplear la librería `RALSA`, la cual lee los syntax de SPSS y genera objetos en el entorno R ahorrando al usuario secundario el tiempo que implicaría realizar todo este trabajo de forma manual.
-
+-   Los archivos de PISA 2006 se encuentran en formato texto plano
+-   Para ser importados el usuario debiera emplear SPSS o SAS
+-   Estos datos pueden ser importados de manera manual, pero esto
+    requiere que el usuario asigne los nombres de variables y otras
+    propiedades a cada columna importada
+-   Una manera de resolver este problema es emplear la librería `RALSA`,
+    la cual lee los syntax de SPSS y genera objetos en el entorno R
+    ahorrando al usuario secundario el tiempo que implicaría realizar
+    todo este trabajo de forma manual.
 
 ## Código 1: Importación de datos en texto plano
 
-- Para resolver este problema empleamos la librería RALSA, en particular la función `RALSA::lsa.convert.data()`
-- La secuencia de este código es la siguiente
-  + Primero colocamos los archivos de PISA 2006 en una carpeta, en este caso en la carpeta:
-    + `'/Users/d/Dropbox (Personal)/_data/PISA 2006/data/'`
-    + En esta misma carpeta, incluimos los archivos SPSS que contienen los nombres y formatos de los archvios de texto plano
-  + Segundo, específicamos los argumentos respectivos de la función
-    + indicamos la carpeta que contiene los archivos de datos de PISA 2006 en `inp.folder`
-    + indicamos la carpeta que alojará los archivos que se van a generar en `out.folder`
-    + indicamos que los archivos que serán procesados son previos a 2015 con el argumento `PISApre15 = TRUE`
-    + Finalmente ejecutamos el código.
-  + Tercero, convertimos todos los archivos `Rdata` a `rds` de modo que puedan tomar cualquier nombre al ser abiertos.
-  + Cuarto, inspreccionamos los archivos generados en la carpeta `rds_folder`
+-   Para resolver este problema empleamos la librería RALSA, en
+    particular la función `RALSA::lsa.convert.data()`
+-   La secuencia de este código es la siguiente
+    -   Primero colocamos los archivos de PISA 2006 en una carpeta, en
+        este caso en la carpeta:
+        -   `'/Users/d/Dropbox (Personal)/_data/PISA 2006/data/'`
+        -   En esta misma carpeta, incluimos los archivos SPSS que
+            contienen los nombres y formatos de los archvios de texto
+            plano
+    -   Segundo, específicamos los argumentos respectivos de la función
+        -   indicamos la carpeta que contiene los archivos de datos de
+            PISA 2006 en `inp.folder`
+        -   indicamos la carpeta que alojará los archivos que se van a
+            generar en `out.folder`
+        -   indicamos que los archivos que serán procesados son previos
+            a 2015 con el argumento `PISApre15 = TRUE`
+        -   Finalmente ejecutamos el código.
+    -   Tercero, convertimos todos los archivos `Rdata` a `rds` de modo
+        que puedan tomar cualquier nombre al ser abiertos.
+    -   Cuarto, inspreccionamos los archivos generados en la carpeta
+        `rds_folder`
 
-
-```{r, echo=TRUE}
-
+``` r
 # -----------------------------------------------------------------------------
 # import all data
 # -----------------------------------------------------------------------------
@@ -145,13 +114,44 @@ RALSA::lsa.convert.data(
                  PISApre15 = TRUE, 
                  out.folder = rds_folder
                  )
+```
 
+    ## 
+    ## 5  datasets selected for conversion. Some datasets can be rather large. Please be patient.
+
+    ##        (1/5)  PISA2006_SPSS_cognitive_item.txt         converted in 00:00:03.950
+
+    ## 
+
+    ##        (3/5)  PISA2006_SPSS_school.txt                 converted in 00:00:00.832
+
+    ##        (4/5)  PISA2006_SPSS_scored_cognitive_item.txt  converted in 00:00:02.555
+
+    ##        (5/5)  PISA2006_SPSS_student.txt                converted in 00:00:05.213
+
+    ## 
+    ##  All 5 found files successfully converted in 00:00:12.863
+
+``` r
 # -----------------------------------------------
 # check files
 # -----------------------------------------------
 
 list.files(rds_folder)
+```
 
+    ##  [1] "pisa_2006_cognitive_item.rds"             
+    ##  [2] "pisa_2006_parent.rds"                     
+    ##  [3] "pisa_2006_school.rds"                     
+    ##  [4] "pisa_2006_scored_cognitive_item.rds"      
+    ##  [5] "pisa_2006_student.rds"                    
+    ##  [6] "pisa2006_spss_cognitive_item.RData"       
+    ##  [7] "pisa2006_spss_parent.RData"               
+    ##  [8] "pisa2006_spss_school.RData"               
+    ##  [9] "pisa2006_spss_scored_cognitive_item.RData"
+    ## [10] "pisa2006_spss_student.RData"
+
+``` r
 # -----------------------------------------------
 # load data and save data in rds
 # -----------------------------------------------
@@ -193,30 +193,39 @@ saveRDS(paste0(rds_folder,'pisa_2006_cognitive_item.rds'))
 list.files(rds_folder) %>%
 stringr::str_subset('.rds') %>%
 knitr::kable()
-
-
 ```
+
+| x                                       |
+|:----------------------------------------|
+| pisa\_2006\_cognitive\_item.rds         |
+| pisa\_2006\_parent.rds                  |
+| pisa\_2006\_school.rds                  |
+| pisa\_2006\_scored\_cognitive\_item.rds |
+| pisa\_2006\_student.rds                 |
 
 # Problema 2: Descriptivos empleando valores plausibles
 
-- Los valores plausibles son realizaciones de un modelo de respuesta condicionado
-- Esto implica que son valores imputados basados en un modelo
-- Como tales, se deben generar los cálculos con cada uno de estos valores plausibles
-- Luego estas estimaciones requieren ser combinadas empleando las reglas de Rubin (1987)
-- Lo anterior puede ser resuelto de al menos dos maneras:
-  - Emplear una libreria diseñada para datos de gran escala capaz de procesar valores plausibles (e.g., instvy, RALSA)
-  - Emplear una librería genérica que pueda interactual con `mitools` (e.g., survey)
-- En el siguiente ejemplo ilustramos como emplear `instvy` y `survey`
-
+-   Los valores plausibles son realizaciones de un modelo de respuesta
+    condicionado
+-   Esto implica que son valores imputados basados en un modelo
+-   Como tales, se deben generar los cálculos con cada uno de estos
+    valores plausibles
+-   Luego estas estimaciones requieren ser combinadas empleando las
+    reglas de Rubin (1987)
+-   Lo anterior puede ser resuelto de al menos dos maneras:
+    -   Emplear una libreria diseñada para datos de gran escala capaz de
+        procesar valores plausibles (e.g., instvy, RALSA)
+    -   Emplear una librería genérica que pueda interactual con
+        `mitools` (e.g., survey)
+-   En el siguiente ejemplo ilustramos como emplear `instvy` y `survey`
 
 # Percentiles (Table 2.1c, p28)
 
 ## intsvy
 
-- https://cran.r-project.org/web/packages/intsvy/intsvy.pdf
+-   <https://cran.r-project.org/web/packages/intsvy/intsvy.pdf>
 
-```{r , echo=TRUE, warning=FALSE}
-
+``` r
 #------------------------------------------------------------------------------
 # percentiles with pv variables
 #------------------------------------------------------------------------------
@@ -247,18 +256,22 @@ percentile_1 <- intsvy::pisa.per.pv(
 
 percentile_1 %>%
 knitr::kable(., digits = c(0, 0, 0, 1))
-
-
-
 ```
 
+| CNT     | Percentiles | Score | Std. err. |
+|:--------|------------:|------:|----------:|
+| Uruguay |           5 |   274 |       6.8 |
+| Uruguay |          10 |   306 |       4.9 |
+| Uruguay |          25 |   363 |       4.1 |
+| Uruguay |          75 |   493 |       3.3 |
+| Uruguay |          90 |   550 |       3.6 |
+| Uruguay |          95 |   583 |       4.2 |
 
 ## survey
 
-- https://cran.r-project.org/web/packages/survey/survey.pdf
+-   <https://cran.r-project.org/web/packages/survey/survey.pdf>
 
-```{r , echo=TRUE, warning=FALSE}
-
+``` r
 #------------------------------------------------------------------------------
 # percentiles with pv variables
 #------------------------------------------------------------------------------
@@ -350,36 +363,63 @@ percentile_2 <- summary(percentiles_imp) %>%
                 tibble::rownames_to_column("percentiles") %>%
                 dplyr::rename(scie = results, ,scie_se = se) %>%
                 dplyr::select(percentiles, scie, scie_se)
+```
 
+    ## Multiple imputation results:
+    ##       with(data_svy, svyquantile(~scie, design = data_svy, quantile = c(0.05, 
+    ##     0.1, 0.25, 0.75, 0.9, 0.95)))
+    ##       MIcombine.default(with(data_svy, svyquantile(~scie, design = data_svy, 
+    ##     quantile = c(0.05, 0.1, 0.25, 0.75, 0.9, 0.95))))
+    ##             results         se     (lower     upper) missInfo
+    ## scie.0.05 273.58800 6.84972051 259.643124 287.532876     39 %
+    ## scie.0.1  306.05676 4.91581844 296.296580 315.816940     22 %
+    ## scie.0.25 363.47844 4.04017904 355.411824 371.545056     27 %
+    ## scie.0.75 492.77530 3.30926733 486.027911 499.522689     40 %
+    ## scie.0.9  549.69350 3.60868712 542.540053 556.846947     21 %
+    ## scie.0.95 583.43040 4.24944976 575.023257 591.837543     19 %
+
+``` r
 # -----------------------------------------------
 # display table
 # -----------------------------------------------
 
 knitr::kable(percentile_2, digits = 2)
-
-
 ```
+
+| percentiles |   scie | scie\_se |
+|:------------|-------:|---------:|
+| scie.0.05   | 273.59 |     6.85 |
+| scie.0.1    | 306.06 |     4.92 |
+| scie.0.25   | 363.48 |     4.04 |
+| scie.0.75   | 492.78 |     3.31 |
+| scie.0.9    | 549.69 |     3.61 |
+| scie.0.95   | 583.43 |     4.25 |
 
 # Problema 3: Descriptivos empleando variables categóricas
 
-- Los cuestionarios de contexto incluyen diferentes variables categoricas
-- En general, estas variables son dicotomizadas para expresar un porcentaje o proporción
-- en el siguiente ejemplo emplearemos el grado de escolaridad máximo de los padres (`HISCED`)
-- Los valores originales los vamos a dicotomizar para distinguir entre aquellos padres que poseen educación terciaria (ISCED 5 y 6), y el resto de los padres.
-- Lo anterior puede ser resuelto de al menos dos maneras:
-  - Emplear una libreria diseñada para datos de gran escala (e.g., instvy, RALSA)
-  - Emplear una librería genérica, diseñada para estudios de muestras complejas (e.g., srvyr)
-- En el siguiente ejemplo ilustramos como emplear `instvy` y `srvyr`
+-   Los cuestionarios de contexto incluyen diferentes variables
+    categoricas
+-   En general, estas variables son dicotomizadas para expresar un
+    porcentaje o proporción
+-   en el siguiente ejemplo emplearemos el grado de escolaridad máximo
+    de los padres (`HISCED`)
+-   Los valores originales los vamos a dicotomizar para distinguir entre
+    aquellos padres que poseen educación terciaria (ISCED 5 y 6), y el
+    resto de los padres.
+-   Lo anterior puede ser resuelto de al menos dos maneras:
+    -   Emplear una libreria diseñada para datos de gran escala (e.g.,
+        instvy, RALSA)
+    -   Emplear una librería genérica, diseñada para estudios de
+        muestras complejas (e.g., srvyr)
+-   En el siguiente ejemplo ilustramos como emplear `instvy` y `srvyr`
 
 # Porcentajes (Table 4.7a, p141)
 
 ## intsvy
 
-- https://cran.r-project.org/web/packages/intsvy/intsvy.pdf
+-   <https://cran.r-project.org/web/packages/intsvy/intsvy.pdf>
 
-
-```{r , echo=TRUE, warning=FALSE}
-
+``` r
 #------------------------------------------------------------------------------
 # percentages
 #------------------------------------------------------------------------------
@@ -418,16 +458,18 @@ percentage_1 <- intsvy::pisa.table(
 
 percentage_1 %>%
 knitr::kable(., digits = c(0, 0, 0, 1, 1))
-
-
 ```
+
+| CNT     | ter | Freq | Percentage | Std.err. |
+|:--------|:----|-----:|-----------:|---------:|
+| Uruguay | 0   | 2050 |       45.7 |        1 |
+| Uruguay | 1   | 2712 |       54.3 |        1 |
 
 ## srvyr
 
-- https://cran.r-project.org/web/packages/srvyr/srvyr.pdf
+-   <https://cran.r-project.org/web/packages/srvyr/srvyr.pdf>
 
-```{r , echo=TRUE, warning=FALSE}
-
+``` r
 #------------------------------------------------------------------------------
 # percentages
 #------------------------------------------------------------------------------
@@ -487,44 +529,20 @@ percentage_2 <- data_svy %>%
 
 percentage_2 %>%
 knitr::kable(., digits = c(0, 3, 3, 3, 3))
-
-
 ```
 
-
+| CNT     |     e | e\_se | e\_low | e\_upp |
+|:--------|------:|------:|-------:|-------:|
+| Uruguay | 0.543 |  0.01 |  0.523 |  0.563 |
 
 # Estimated times
 
-```{r , echo=FALSE, include=FALSE}
-
-# ---------------------------------------- 
-# estimated times
-# ---------------------------------------- 
-
-# get current time
-end_time <- Sys.time()
-
-# create table
-time_table <- data.frame(
-  events = c('start', 'end'),
-  times = c(start_time, end_time)
-  )
-
-# display time
-knitr::kable(time_table, align = 'r') 
-
-```
-
-
-
-```{r , echo=TRUE}
-
+``` r
 # ---------------------------------------- 
 # estimated times
 # ---------------------------------------- 
 
 difftime(end_time, start_time, units="mins")
-
-
 ```
 
+    ## Time difference of 0.317007383 mins
