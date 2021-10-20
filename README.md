@@ -20,8 +20,8 @@
 
 ## [Regresion]
 
--   [actualizar]
-    [example](https://github.com/dacarras/colmee_2021_lsa/blob/main/pisa_2006_descriptives_examples.md).
+-   Ejemplo de importación de datos ICCS 2009 y analisis de regresión y logística
+    [example](https://github.com/dacarras/colmee_2021_lsa/blob/main/pisa_2006_descriptives_examples.rmd).
 
 
 ## Autores
