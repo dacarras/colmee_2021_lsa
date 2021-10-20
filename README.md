@@ -6,8 +6,8 @@
 
 -   Introducción
 -   Descriptivos
--   [regresion 1]
--   [regresion 1]
+-   Preguntas de Investigación
+-   Regresión
 
 > Nota: presionar el sigiuente [link para bajar las láminas del taller en pdf](https://www.dropbox.com/sh/mco9ry9n0x8spjw/AAAtYft1OD4tJgP8JSO4WoTga?dl=1).
 

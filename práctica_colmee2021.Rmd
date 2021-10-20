@@ -1,0 +1,292 @@
+---
+title: "Introducción a Modelamiento de estudios de gran Escala"
+subtitle: 'version en progreso'
+author: 'Daniel Miranda & Diego Carrasco| Centro de Medición MIDE UC'
+date: 'no date'
+output:
+  html_document:
+    code_folding: hide
+    fig_height: 8
+    fig_width: 10
+    highlight: kate
+    number_sections: yes
+    theme: paper
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+---
+
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(dev = 'pdf')
+# remove all previous objects
+rm(list = ls()) 
+
+```
+
+# Datos y variables
+
+```{r , eval=FALSE}
+
+#####################################################################################################
+#####################################################################################################
+#####################################################################################################
+################ Workshop: Introducción al análisis de estudios de gran escala ######################
+################################# Daniel Miranda & Diego Carrasco ###################################
+#####################################################################################################
+#####################################################################################################
+#####################################################################################################
+````
+
+## Activar librerías
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+#Activar librerias
+library(ggplot2)
+library(reshape)
+library(plyr)
+library(dplyr)
+library(readstata13)
+library(VIM)
+library(stringr)
+library(summarytools)
+library(BIFIEsurvey)
+```
+
+
+## Leer datos
+
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+#setwd("/Users/daniel/Dropbox (Personal)/20211020_colmee_r/03b_damiran1/image")
+
+#iccs=read.dta13("/Users/DANIEL/Dropbox (Personal)/20180513 colmee r - copia/03_workshop/regres/data/ICCS_LA.dta", convert.factors = FALSE)
+
+iccs=haven::read_dta("/Users/daniel/Dropbox (Personal)/20211020_colmee_r/03b_damiran1/data/ICCS2016.dta")
+
+class(iccs)
+dim(iccs)
+head(iccs)
+#str(iccs)
+dplyr::glimpse(iccs) # ver estructura general
+```
+
+
+## Seleccionar datos de un País de interés
+
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+iccsp= iccs %>%
+      dplyr::filter(country=="PER") %>%
+      print
+
+class(iccsp)
+dim(iccsp)
+head(iccsp)
+#str(iccsp)
+names(iccsp)
+
+
+iccsp= iccsp %>%
+  dplyr::filter(country=="PER") %>%
+  dplyr::mutate(gendum= ifelse(S_GENEQL<50,0,1)) %>%
+  dplyr::select(idschool, idstud, totwgts, WGTFAC1, WGTADJ1S, WGTFAC2S, WGTADJ2S, WGTADJ3S, jkzones, jkreps, PV1CIV, PV2CIV, PV3CIV, PV4CIV, PV5CIV, S_HISCED, S_TLANG, S_HOMLIT, S_GENDER, gendum) %>%
+  print
+dim(iccsp)
+```
+
+
+
+## Exploración rápida de una base
+
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+skimr::skim(iccsp)
+summarytools::view(summarytools::dfSummary(iccsp, headings=TRUE))
+#-----remover missings-------------------
+iccsp= iccsp %>%
+  na.omit() %>%
+  print
+
+##-------Exploración rápida de una base------------
+skimr::skim(iccsp)
+summarytools::view(summarytools::dfSummary(iccsp, headings=TRUE))
+```
+
+
+
+# Preparar datos con diseño complejo
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+
+## BIFIEsurvey
+# create BIFIE object
+library(BIFIEsurvey)
+
+databifie <- BIFIE.data.jack(
+  data    = iccsp,
+  jktype  = 'JK_TIMSS', 
+  jkzone  = 'jkzones', 
+  jkrep   = 'jkreps',
+  wgt     = 'totwgts',
+  pv_vars = ("PV"),
+)
+```
+
+
+# Correlaciones
+
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+# correlation table
+table_corr_01 <- BIFIEsurvey::BIFIE.correl(databifie, vars=c('PV', 'S_HISCED', 'S_HOMLIT', 'S_TLANG'))
+
+# display summary
+summary(table_corr_01)
+```
+
+
+# Regresión líneal
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+#Educación parental
+table_regresion_01 <- BIFIEsurvey::BIFIE.linreg(databifie, 
+                                                formula = PV ~ 1 + S_HISCED)
+
+knitr::kable(table_regresion_01$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+
+
+#Educación parental * Educación parental
+iccsp= iccsp %>%
+  dplyr::mutate(intedu= S_HISCED * S_HISCED) %>%
+  print
+
+databifie <- BIFIE.data.jack(
+  data    = iccsp,
+  jktype  = 'JK_TIMSS', 
+  jkzone  = 'jkzones', 
+  jkrep   = 'jkreps',
+  wgt     = 'totwgts',
+  pv_vars = ("PV"),
+)
+
+
+table_regresion_01b <- BIFIEsurvey::BIFIE.linreg(databifie, 
+                                                formula = PV ~ 1 + S_HISCED + intedu)
+
+knitr::kable(table_regresion_01b$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+
+
+#Lenguaje
+table_regresion_02 <- BIFIEsurvey::BIFIE.linreg(databifie, 
+                                                formula = PV ~ 1 + S_TLANG)
+
+knitr::kable(table_regresion_02$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+
+
+#Libros
+table_regresion_03 <- BIFIEsurvey::BIFIE.linreg(databifie, 
+                                                formula = PV ~ 1 + S_HOMLIT)
+
+knitr::kable(table_regresion_03$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+
+#Modelo Completo
+table_regresion_04 <- BIFIEsurvey::BIFIE.linreg(databifie, 
+                                                formula = PV ~ 1 + S_HISCED + S_TLANG + S_HOMLIT)
+
+knitr::kable(table_regresion_04$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+
+
+#Modelo Completo: moderación
+table_regresion_05 <- BIFIEsurvey::BIFIE.linreg(databifie, 
+                                                formula = PV ~ 1 + S_HISCED*S_TLANG + S_HOMLIT)
+
+knitr::kable(table_regresion_05$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+
+#----Graficar la interacción
+s_edotro = 8.070 + 0*11.228
+s_edesp = 8.070 + 1*11.228
+
+i_edotro = 316.85 + 0*61.817
+i_edesp = 316.85 + 1*61.817
+
+
+x0 = iccsp$S_HISCED
+x0=as.numeric(x0)
+
+ed.esp = data.frame(x0 = x0)
+ed.esp$y0 = i_edesp + ed.esp$x0 * s_edesp 
+ed.esp$type = ("Español")
+
+
+
+ed.otro = data.frame(x0 = x0)
+ed.otro$y0 = i_edotro + ed.otro$x0*s_edotro
+ed.otro$type = ("Otro")
+
+
+## Create final data frame
+df.ed = rbind(ed.esp, ed.otro)
+df.ed$type = factor(df.ed$type)
+levels(df.ed$type)
+
+skimr::skim(df.ed)
+
+ed= ggplot (df.ed, aes(x = x0, y = y0) ) +
+  xlim(xmin=0,xmax=4)+
+  ylim(xmin=300,xmax=500)+
+  labs(y= "Logro", x="educación")+ geom_line(aes(colour = type, linetype = type), size=1.5) +
+  #geom_jitter(data, aes(x = x, y = y), size = 3, alpha = 0. 7) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill="white") ) +
+  theme(legend.key = element_blank() ) +
+  theme(text = element_text(size = 14, face="bold")) +
+  scale_colour_manual(name = "Efectos parciales",
+                      labels= c ("Español ***","Otro ns") ,
+                      values = c ("#E41A1C", "#575757"))+
+  scale_linetype_manual(name = "Efectos parciales",
+                        labels= c ("Español ***","Otro ns"),
+                        values = c ("solid", "longdash"))
+print(ed)
+#ggsave("interacción.png")
+```
+
+# Regresión logística
+
+```{r , eval=TRUE, warning=FALSE, message=FALSE}
+summ= iccsp %>%
+  dplyr::select(PV1CIV, PV2CIV, S_HISCED, S_TLANG, S_HOMLIT, S_GENDER) 
+summarytools::view(summarytools::dfSummary(iccsp, headings=TRUE))
+```
+
+**Regresión logística: descriptivos**
+
+```{r , eval=TRUE, echo=TRUE, warning=FALSE, message=FALSE, error=FALSE, fig.align = "center"}
+crosstable <- with(iccsp, ctable(gendum, S_GENDER))
+print(crosstable, method='render', footnote = NA)
+```
+
+**Regresión logística: modelo 1**
+```{r , eval=TRUE, echo=TRUE, warning=FALSE, tidy=TRUE}
+
+logit1 <- BIFIEsurvey::BIFIE.logistreg(databifie, formula= gendum ~ S_HISCED)
+
+knitr::kable(logit1$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+```
+
+
+**Regresión logística: modelo 2**
+```{r , eval=TRUE, echo=TRUE, warning=FALSE, tidy=TRUE}
+
+logit2 <- BIFIEsurvey::BIFIE.logistreg(databifie, formula= gendum ~ S_HISCED + S_GENDER)
+
+knitr::kable(logit2$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+```
+
+
+**Regresión logística: modelo 3**
+```{r , eval=TRUE, echo=TRUE, warning=FALSE, tidy=TRUE}
+
+logit3 <- BIFIEsurvey::BIFIE.logistreg(databifie, formula= gendum ~  S_HISCED * S_GENDER)
+
+knitr::kable(logit3$stat[,c('parameter','var','est','SE','t','p')], digits = 3)
+```
