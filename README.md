@@ -11,28 +11,18 @@
 
 > Nota: presionar el sigiuente [link para bajar las láminas del taller en pdf](https://www.dropbox.com/sh/mco9ry9n0x8spjw/AAAtYft1OD4tJgP8JSO4WoTga?dl=1).
 
-# Workshop examples
+# Ejemplos
 
-## Data preparation
+## Importación de datos y descriptivos
 
--   Download the files to replicate the **import and export data for
-    modelling**
-    [example](https://www.dropbox.com/sh/li9sndp5irp0ffa/AACcp5llXkcCWKDwcFeySt7Na?dl=1).
-    -   link also
-        [here](https://www.dropbox.com/sh/li9sndp5irp0ffa/AACcp5llXkcCWKDwcFeySt7Na?dl=1).
+-   Ejemplo de importación de datos de PISA 2006 y generacion de descriptivos (percentiles y porcentajes)
+    [example](https://github.com/dacarras/colmee_2021_lsa/blob/main/pisa_2006_descriptives_examples.md).
 
-## Latent Class Models example
+## [Regresion]
 
--   Download Mplus
-    [example](https://www.dropbox.com/sh/r18pra0fhig85y2/AACkgpBpKWuO80waD2AeTBoUa?dl=1).
-    -   Two country multi-group latent class model, with sample of 1000
-        observations to speed up estimation time.
+-   [actualizar]
+    [example](https://github.com/dacarras/colmee_2021_lsa/blob/main/pisa_2006_descriptives_examples.md).
 
-## Structural Equation Models example
-
--   Download the files to replicate the commented
-    [example](https://www.dropbox.com/sh/lggup1w5h0mp4k4/AADbDIzv-O5XgpPE2-eZfKUDa?dl=1),
-    and the presented slides.
 
 ## Autores
 
