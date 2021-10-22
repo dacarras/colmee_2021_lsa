@@ -6,7 +6,6 @@
 
 -   Introducción
 -   Descriptivos
--   Preguntas de Investigación
 -   Regresión
 
 > Nota: presionar el sigiuente [link para bajar las láminas del taller en pdf](https://www.dropbox.com/sh/mco9ry9n0x8spjw/AAAtYft1OD4tJgP8JSO4WoTga?dl=1).
@@ -20,7 +19,7 @@
 
 ## [Regresion]
 
--   Ejemplo de importación de datos ICCS 2009 y analisis de regresión y logística
+-   Ejemplo de importación de datos ICCS 2009 y análisis de regresión y logística
     [example](https://github.com/dacarras/colmee_2021_lsa/blob/main/iccs_2016_regression_examples.md).
 
 
