@@ -21,7 +21,7 @@
 ## [Regresion]
 
 -   Ejemplo de importación de datos ICCS 2009 y analisis de regresión y logística
-    [example](https://github.com/dacarras/colmee_2021_lsa/blob/main/pisa_2006_descriptives_examples.rmd).
+    [example](https://github.com/dacarras/colmee_2021_lsa/blob/main/iccs_2016_regression_examples.md).
 
 
 ## Autores
